@@ -1,0 +1,87 @@
+<html>
+  <head>
+    <title>YouCube</title>
+
+    <script type="text/javascript">
+    function blog (corpo, data) {
+      this.corpo = corpo;
+      this.data = data;
+
+      this.paraString = function() {
+        return "[" + this.data.getDate() + "/" + (this.data.getMonth() + 1) + "/" + this.data.getFullYear() + "] " + this.corpo;
+      }
+
+      this.paraHTML = function (highlight) {
+        var blogHTML = "";
+        blogHTML += highlight ? "<p style='background-color:#EEEEEE'>" : "<p>";
+        blogHTML += "<strong>" + this.data.getDate() + "/" + (this.data.getMonth() + 1) + "/" 
+                     + this.data.getFullYear() + "</strong><br>" + this.corpo + "</p>";
+
+        return blogHTML;
+      }
+
+      this.contemTexto = function (textoPesquisa) {
+        return (this.corpo.toUpperCase().indexOf(textoPesquisa.toUpperCase()) != -1);
+      }
+    }
+
+    var entradasBlog =  [ new blog("Recebi o novo cubo que comprei, eh uma verdadeira perola.", new Date("08/14/2008")),
+                          new blog("Resolvi o novo cubo. Agora estou entediada e procurando por um novo.", new Date("08/19/2008")),
+                          new blog("O Barufi nao sabe o que deveria estar escrito aqui ..", new Date("08/16/2008")),
+                          new blog("Achei um cubo 7x7x7 a venda na internet. Uhu, este podera ser o melhor !", new Date("08/21/2008")) ];
+
+    function mostrarBlog(numEntradas) {
+      entradasBlog.sort(function (entrada1, entrada2) {return  entrada2.data - entrada1.data;}); /* Como a função sabe ao que se refere entrada1 e entrada2? */
+
+
+      if (!numEntradas) {
+        numEntradas = entradasBlog.length;
+      }
+
+      var i = 0;
+      var listaBlog = "";
+      while (i < entradasBlog.length && i < numEntradas) {
+        listaBlog += entradasBlog[i].paraHTML(i % 2 == 0);
+        i++;
+      }
+      document.getElementById("blog").innerHTML = listaBlog;
+    }
+
+    function pesquisaBlog(textoPesquisa) {
+      for (var i = 0; i < entradasBlog.length; i++) {
+        if (textoPesquisa == "") {
+          document.getElementById('textoPesquisa').value = 'Digite algo aqui !';
+          setTimeout("document.getElementById('textoPesquisa').value = '';", 1500)
+          break;
+        } else if (entradasBlog[i].contemTexto(textoPesquisa)) {
+          alert("[" + entradasBlog[i].data.getDate() + "/" + (entradasBlog[i].data.getMonth() + 1) + "/" 
+          + entradasBlog[i].data.getFullYear() + "] " + entradasBlog[i].corpo);
+          break;
+        }
+      }
+
+
+      if (i == entradasBlog.length) {
+        alert("Nenhuma entrada encontrada");
+      }
+    }
+
+    function randomizaBlog() {
+      var numAleatorio = Math.floor((Math.random() * entradasBlog.length));
+      var entradaAleatoria = entradasBlog[numAleatorio];
+      alert(entradasBlog[numAleatorio].paraString());
+    }
+
+    </script>
+  </head>
+
+  <body onload="mostrarBlog(3);">
+    <h2>YouCube: O Blog Para Quebra-Cabecas De Cubo</h2>
+    <img src="cube.png" alt="YouCube" />
+    <input type="text" id="textoPesquisa" name="textoPesquisa" value="" />
+    <input type="button" id="pesquisar" value="Pesquisar" onclick="pesquisaBlog(document.getElementById('textoPesquisa').value);" />
+    <div id="blog"></div>
+    <input type="button" id="mostrarTodas" value="Mostrar todas as entradas do blog" onclick="mostrarBlog();" />
+    <input type="button" id="mostrarAleatoria" value="Mostrar uma entrada aleatoria do blog" onclick="randomizaBlog();" />
+  </body>
+</html>
